@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Image } from 'react-native';
+import PropTypes from 'prop-types';
 
 import Background from '~/components/Background';
 import {
@@ -12,7 +13,7 @@ import {
 } from './styles';
 import logo from '~/assets/logo.png';
 
-export default function SignIn() {
+export default function SignIn({ navigation }) {
   const passwordRef = useRef();
 
   function handleSubmit() {}
@@ -20,7 +21,7 @@ export default function SignIn() {
   return (
     <Background>
       <Container>
-        <Image source={logo} style={{ width: 54, height: 54 }} />
+        <Image source={logo} style={{ width: 48, height: 48 }} />
 
         <Form>
           <FormInput
@@ -44,10 +45,16 @@ export default function SignIn() {
           <SubmitButton>Entrar</SubmitButton>
         </Form>
 
-        <SignLink>
+        <SignLink onPress={() => navigation.navigate('SignUp')}>
           <SignLinkText>Criar conta grátis</SignLinkText>
         </SignLink>
       </Container>
     </Background>
   );
 }
+
+SignIn.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func,
+  }).isRequired,
+};
