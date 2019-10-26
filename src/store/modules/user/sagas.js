@@ -12,7 +12,6 @@ export function* updateProfile({ payload }) {
       email,
       ...(rest.oldPassword ? rest : {}),
     };
-    console.tron.log(profile);
 
     const response = yield call(api.put, 'users', profile);
 

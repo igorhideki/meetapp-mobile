@@ -10,8 +10,6 @@ export function* signIn({ payload }) {
     const response = yield call(api.post, 'session', { email, password });
     const { token, user } = response.data;
 
-    console.tron.log(user);
-
     if (user.organizer) {
       Alert.alert(
         'Erro no login',
