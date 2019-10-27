@@ -36,3 +36,8 @@ Abaixo estão as funcionalidades da aplicação.
 * Inscrições de usuário em meetups
 * Cancelamento de inscrição de usuário em meetups
 * Visualização e edição do perfil do usuário
+
+## Links
+
+* [Meetapp API](https://github.com/igorhideki/meetapp-api)
+* [Meetapp Web](https://github.com/igorhideki/meetapp-web)
