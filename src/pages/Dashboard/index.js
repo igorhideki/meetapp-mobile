@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, subDays, addDays, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
@@ -76,6 +76,7 @@ export default function Dashboard() {
   }
 
   async function loadMoreMeetups() {
+    console.tron.log('loadMoreMeetups');
     if (hasNoMoreMeetups || loading) return;
 
     setLoading(true);
@@ -98,12 +99,28 @@ export default function Dashboard() {
         };
       });
 
+      if (data.length < 10) {
+        setHasNoMoreMeetups(true);
+      }
+
       setPage(page + 1);
       setMeetups([...meetups, ...data]);
     } else {
       setHasNoMoreMeetups(true);
     }
     setLoading(false);
+  }
+
+  async function handleSubscription(id) {
+    try {
+      const response = await api.post(`meetups/${id}/subscriptions`);
+
+      if (response.data) {
+        Alert.alert('Sucesso!', 'Inscrição realizada com sucesso.');
+      }
+    } catch (error) {
+      Alert.alert('Ops!', error.response.data.error);
+    }
   }
 
   return (
@@ -130,7 +147,9 @@ export default function Dashboard() {
             renderItem={({ item }) => (
               <Meetup data={item}>
                 {!item.past && (
-                  <Button onPress={() => {}}>Realizar inscrição</Button>
+                  <Button onPress={() => handleSubscription(item.id)}>
+                    Realizar inscrição
+                  </Button>
                 )}
               </Meetup>
             )}
