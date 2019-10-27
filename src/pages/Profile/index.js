@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { updateProfileRequest } from '~/store/modules/user/actions';
@@ -36,7 +37,23 @@ export default function Profile() {
     setConfirmPassword('');
   }, [profile]);
 
+  useEffect(() => {
+    if (!oldPassword) {
+      setPassword('');
+      setConfirmPassword('');
+    }
+  }, [oldPassword]);
+
   function handleSubmit() {
+    if (!name) {
+      Alert.alert('Campo obrigatório', 'O campo nome deve ser preenchido');
+      return;
+    }
+
+    if (!email) {
+      Alert.alert('Campo obrigatório', 'O campo e-mail deve ser preenchido');
+      return;
+    }
     dispatch(
       updateProfileRequest({
         name,
@@ -99,6 +116,7 @@ export default function Profile() {
             onSubmitEditing={() => confirmPasswordRef.current.focus()}
             value={password}
             onChangeText={setPassword}
+            editable={!!oldPassword}
           />
 
           <FormInput
@@ -109,6 +127,7 @@ export default function Profile() {
             onSubmitEditing={handleSubmit}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
+            editable={!!password}
           />
 
           <SubmitButton onPress={handleSubmit}>Atualizar perfil</SubmitButton>
