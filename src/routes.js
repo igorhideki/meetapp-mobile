@@ -22,7 +22,6 @@ export default (isSigned = false) =>
             Profile,
           },
           {
-            title: 'Teste',
             resetOnBlur: true,
             tabBarOptions: {
               keyboardHidesTabBar: true,
