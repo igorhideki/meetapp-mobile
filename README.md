@@ -11,7 +11,7 @@ Outras tecnologias utilizadas neste projeto:
 * Reactotron
 * Styled-components
 
-:warning: Alerta! Essa aplicação foi testada apenas na plataforma iOS.
+:warning: Alerta! Essa aplicação foi testada **apenas** na plataforma **iOS**.
 
 ## Instalação
 
