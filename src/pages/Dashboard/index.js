@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { withNavigationFocus } from 'react-navigation';
 import { ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { format, subDays, addDays, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
+import PropTypes from 'prop-types';
 
 import api from '~/services/api';
 import Background from '~/components/Background';
@@ -21,12 +23,13 @@ import {
   Loading,
 } from './styles';
 
-export default function Dashboard() {
+function Dashboard({ isFocused }) {
   const [meetups, setMeetups] = useState([]);
   const [date, setDate] = useState(new Date());
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasNoMoreMeetups, setHasNoMoreMeetups] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const dateFormatted = useMemo(
     () => format(date, "d 'de' MMMM", { locale: pt }),
     [date]
@@ -57,15 +60,17 @@ export default function Dashboard() {
       }
       setLoading(false);
     }
-
-    loadMeetups();
-  }, [date]);
+    if (isFocused) {
+      loadMeetups();
+    }
+  }, [date, isFocused]);
 
   useEffect(() => {
     setMeetups([]);
     setHasNoMoreMeetups(false);
     setPage(1);
-  }, [date]);
+    setIsScrolled(false);
+  }, [date, isFocused]);
 
   function handlePrevDay() {
     setDate(subDays(date, 1));
@@ -77,7 +82,7 @@ export default function Dashboard() {
 
   async function loadMoreMeetups() {
     console.tron.log('loadMoreMeetups');
-    if (hasNoMoreMeetups || loading) return;
+    if (hasNoMoreMeetups || loading || !isScrolled) return;
 
     setLoading(true);
 
@@ -144,6 +149,7 @@ export default function Dashboard() {
             keyExtractor={meetup => String(meetup.id)}
             onEndReachedThreshold={0.2}
             onEndReached={loadMoreMeetups}
+            onMomentumScrollBegin={() => setIsScrolled(true)}
             renderItem={({ item }) => (
               <Meetup data={item}>
                 {!item.past && (
@@ -178,3 +184,9 @@ Dashboard.navigationOptions = {
     <Icon name="format-list-bulleted" size={20} color={tintColor} />
   ),
 };
+
+Dashboard.propTypes = {
+  isFocused: PropTypes.bool.isRequired,
+};
+
+export default withNavigationFocus(Dashboard);
