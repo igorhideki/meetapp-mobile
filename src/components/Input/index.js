@@ -4,20 +4,24 @@ import PropTypes from 'prop-types';
 
 import { Container, TInput } from './styles';
 
-function Input({ style, ...rest }, ref) {
+function Input({ style, editable, ...rest }, ref) {
+  console.tron.log(editable);
+
   return (
-    <Container style={style}>
-      <TInput {...rest} ref={ref} />
+    <Container style={style} editable={editable}>
+      <TInput {...rest} ref={ref} editable={editable} />
     </Container>
   );
 }
 
 Input.propTypes = {
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  editable: PropTypes.bool,
 };
 
 Input.defaultProps = {
   style: {},
+  editable: true,
 };
 
 export default forwardRef(Input);
