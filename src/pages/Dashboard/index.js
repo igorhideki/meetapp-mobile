@@ -38,8 +38,6 @@ export default function Dashboard() {
 
       const response = await api.get('meetups', { params: { date, page: 1 } });
 
-      setLoading(false);
-
       if (response.data.length) {
         const data = response.data.map(meetup => {
           return {
@@ -53,11 +51,11 @@ export default function Dashboard() {
             ),
           };
         });
-
-        setMeetups([data]);
+        setMeetups(data);
       } else {
         setHasNoMoreMeetups(true);
       }
+      setLoading(false);
     }
 
     loadMeetups();
@@ -77,12 +75,35 @@ export default function Dashboard() {
     setDate(addDays(date, 1));
   }
 
-  function loadMoreMeetups() {
+  async function loadMoreMeetups() {
     if (hasNoMoreMeetups || loading) return;
 
-    setPage(page + 1);
+    setLoading(true);
 
-    console.tron.log(page);
+    const response = await api.get('meetups', {
+      params: { date, page: page + 1 },
+    });
+
+    if (response.data.length) {
+      const data = response.data.map(meetup => {
+        return {
+          ...meetup,
+          dateFormatted: format(
+            parseISO(meetup.date),
+            "d 'de' MMMM, 'às' H'h'",
+            {
+              locale: pt,
+            }
+          ),
+        };
+      });
+
+      setPage(page + 1);
+      setMeetups([...meetups, ...data]);
+    } else {
+      setHasNoMoreMeetups(true);
+    }
+    setLoading(false);
   }
 
   return (
@@ -104,7 +125,7 @@ export default function Dashboard() {
           <List
             data={meetups}
             keyExtractor={meetup => String(meetup.id)}
-            onEndReachedThreshold={0.1}
+            onEndReachedThreshold={0.2}
             onEndReached={loadMoreMeetups}
             renderItem={({ item }) => (
               <Meetup data={item}>
@@ -115,9 +136,11 @@ export default function Dashboard() {
             )}
           />
         ) : (
-          <Helper>
-            <HelperText>Ainda não há meetups para esta data.</HelperText>
-          </Helper>
+          !loading && (
+            <Helper>
+              <HelperText>Ainda não há meetups para esta data.</HelperText>
+            </Helper>
+          )
         )}
 
         {loading && (
